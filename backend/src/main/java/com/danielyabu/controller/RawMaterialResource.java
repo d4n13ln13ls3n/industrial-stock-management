@@ -8,6 +8,8 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 @Path("/raw-materials")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -20,7 +22,7 @@ public class RawMaterialResource {
 
     @POST
     @Transactional
-    public Response create(RawMaterial rawMaterial) {
+    public Response create(@Valid RawMaterial rawMaterial) {
         rawMaterial.persist();
         return Response.status(Response.Status.CREATED)
             .entity(rawMaterial)
@@ -36,7 +38,7 @@ public class RawMaterialResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, RawMaterial updated) {
+    public Response update(@PathParam("id") Long id, @Valid RawMaterial updated) {
         RawMaterial rawMaterial = RawMaterial.findById(id);
 
         if (rawMaterial == null) {
@@ -51,7 +53,7 @@ public class RawMaterialResource {
     }
 
     @DELETE
-    @Path("/id")
+    @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
         

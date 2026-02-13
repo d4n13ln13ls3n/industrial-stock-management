@@ -12,12 +12,18 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import org.jboss.logging.Logger;
+
 import java.util.List;
+
+import jakarta.validation.Valid;
 
 @Path("/products")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ProductResource {
+
+    private static final Logger LOG = Logger.getLogger(ProductResource.class);
 
     @GET
     public List<Product> listAll() {
@@ -26,7 +32,8 @@ public class ProductResource {
 
     @POST
     @Transactional
-    public Response create(Product product) {
+    public Response create(@Valid Product product) {
+        System.out.println("Entrou no método create");
         product.persist();
         return Response.status(Response.Status.CREATED).entity(product).build();
     }
@@ -40,7 +47,7 @@ public class ProductResource {
     @PUT
     @Path("/{id}")
     @Transactional
-    public Response update(@PathParam("id") Long id, Product updatedProduct) {
+    public Response update(@PathParam("id") Long id, @Valid Product updatedProduct) {
         Product product = Product.findById(id);
 
         if (product == null) {
@@ -70,7 +77,7 @@ public class ProductResource {
     @POST
     @Path("/{productId}/materials")
     @Transactional
-    public Response addMaterialToProduct(@PathParam("productId") Long productId, ProductMaterialRequest request) {
+    public Response addMaterialToProduct(@PathParam("productId") Long productId, @Valid ProductMaterialRequest request) {
         
         Product product = Product.findById(productId);
 
@@ -94,6 +101,10 @@ public class ProductResource {
         productMaterial.requiredQuantity = request.requiredQuantity;
 
         productMaterial.persist();
+
+        LOG.info("Associated raw material " + rawMaterial.code +
+        " to product " + product.code +
+        " with required quantity " + request.requiredQuantity);
 
         return Response.status(Response.Status.CREATED)
             .entity(productMaterial)

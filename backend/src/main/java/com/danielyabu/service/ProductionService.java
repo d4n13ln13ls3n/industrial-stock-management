@@ -11,10 +11,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jboss.logging.Logger;
+
 @ApplicationScoped
 public class ProductionService {
 
+    private static final Logger LOG = Logger.getLogger(ProductionService.class);
+
     public List<ProductionCapacityResponse> generateProductionPlan() {
+        LOG.info("Generating production capacity plan...");
 
         List<Product> products = Product.listAll();
         List<ProductionCapacityResponse> responseList = new ArrayList<>();
@@ -41,6 +46,8 @@ public class ProductionService {
             }
 
             if (maxProducible > 0) {
+
+                LOG.info("Product " + product.code + " can produce " + maxProducible + " units.");
 
                 ProductionCapacityResponse response = new ProductionCapacityResponse();
                 response.productId = product.id;
