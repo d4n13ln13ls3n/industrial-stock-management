@@ -33,7 +33,6 @@ public class ProductResource {
     @POST
     @Transactional
     public Response create(@Valid Product product) {
-        System.out.println("Entrou no método create");
         product.persist();
         return Response.status(Response.Status.CREATED).entity(product).build();
     }
@@ -92,6 +91,14 @@ public class ProductResource {
         if (rawMaterial == null) {
             return Response.status(Response.Status.NOT_FOUND)
                 .entity("Raw material not found")
+                .build();
+        }
+
+        List<ProductMaterial> existing = ProductMaterial.list("product = ?1 and rawMaterial = ?2", product, rawMaterial);
+
+        if (!existing.isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Raw material already associated with this product")
                 .build();
         }
 
