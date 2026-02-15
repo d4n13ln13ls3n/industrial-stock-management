@@ -83,6 +83,12 @@
             <artifactId>quarkus-smallrye-openapi</artifactId>
         </dependency>
 
+        <!-- HTTP / CORS Support -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-vertx-http</artifactId>
+        </dependency>
+
         <!-- ✅ TEST DEPENDENCIES -->
         <dependency>
             <groupId>io.quarkus</groupId>
