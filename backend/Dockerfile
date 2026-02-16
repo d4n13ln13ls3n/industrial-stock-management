@@ -1,11 +1,14 @@
-FROM eclipse-temurin:17-jdk
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 WORKDIR /app
-
 COPY . .
+RUN mvn package -DskipTests
 
-RUN ./mvnw package -DskipTests
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+COPY --from=build /app/target/quarkus-app/ /app/
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/quarkus-app/quarkus-run.jar"]
+CMD ["java", "-jar", "quarkus-run.jar"]
