@@ -1,23 +1,25 @@
 import { useCrud } from "../hooks/useCrud";
 import { useForm } from "../hooks/useForm";
+import "./RawMaterialsPage.css";
 
 export default function RawMaterialsPage() {
     const { items: materials, loading, create, update, remove } = useCrud("raw-materials");
+
     const { form, setForm, editingId, setEditingId, handleChange, resetForm } = useForm({
         code: "",
         name: "",
         stockQuantity: ""
     });
-    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const payload = {
             ...form,
             stockQuantity: parseInt(form.stockQuantity, 10)
-        }
+        };
 
-        if(editingId !== null){
+        if (editingId !== null) {
             await update(editingId, payload);
         } else {
             await create(payload);
@@ -37,55 +39,80 @@ export default function RawMaterialsPage() {
             stockQuantity: material.stockQuantity
         });
         setEditingId(material.id);
-    }
+    };
 
     return (
-        <div>
+        <div className="raw-container">
             <h2>Raw Materials</h2>
 
-            <form onSubmit={handleSubmit}>
-                <input
-                    name="code"
-                    placeholder="Code"
-                    value={form.code}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    name="name"
-                    placeholder="Name"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
-                />
-                <input
-                    name="stockQuantity"
-                    type="number"
-                    placeholder="StockQuantity"
-                    value={form.stockQuantity}
-                    onChange={handleChange}
-                    required
-                />
-                <button type="submit">
-                    {editingId ? 'Update Raw Material' : 'Add Raw Material'}
-                </button>
-            </form>
+            <div className="raw-form-card">
+                <form onSubmit={handleSubmit}>
+                    <div className="form-row">
+                        <label>Code</label>
+                        <input
+                            name="code"
+                            value={form.code}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-            <hr />
+                    <div className="form-row">
+                        <label>Name</label>
+                        <input
+                            name="name"
+                            value={form.name}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-            {loading && <p>Loading...</p>}
+                    <div className="form-row">
+                        <label>Stock Quantity</label>
+                        <input
+                            name="stockQuantity"
+                            type="number"
+                            value={form.stockQuantity}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
-            {materials.map(material => (
-                <div key={material.id}>
-                    <strong>{material.name}</strong> ({material.code}) - {material.stockQuantity}
-                    <button onClick={() => handleEdit(material)}>
-                        Edit
+                    <button type="submit" className="primary-button">
+                        {editingId ? "Update Raw Material" : "Add Raw Material"}
                     </button>
-                    <button onClick={() => handleDelete(material.id)}>
-                        Delete
-                    </button>
-                </div>
-            ))}
+                </form>
+            </div>
+
+            <div className="raw-list">
+                {loading && <p>Loading...</p>}
+
+                {materials.map(material => (
+                    <div key={material.id} className="raw-row">
+                        <div className="raw-info">
+                            <strong>{material.name}</strong>
+                            <span>({material.code})</span>
+                            <span>Stock: {material.stockQuantity}</span>
+                        </div>
+
+                        <div className="raw-actions">
+                            <button
+                                onClick={() => handleEdit(material)}
+                                className="secondary-button"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                onClick={() => handleDelete(material.id)}
+                                className="danger-button"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

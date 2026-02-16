@@ -1,0 +1,148 @@
+.products-container {
+    width: 100%;
+    max-width: 1600px;
+    margin: 8px auto;
+    padding: 0 80px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.products-container h2 {
+    font-size: 1.8rem;
+    margin: 6px 0 12px 0;
+    text-align: center;
+}
+
+.products-form-card {
+    width: 60%;
+
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow:
+        0 4px 6px rgba(0,0,0,0.04),
+        0 10px 20px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.form-row label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+}
+
+.form-row input {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    transition: 0.2s ease;
+}
+
+.form-row input:hover {
+    border-color: #94a3b8;
+}
+
+.form-row input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    outline: none;
+}
+
+.primary-button {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 2px solid #2563eb;
+    background: white;
+    color: #2563eb;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.primary-button:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.primary-button:focus {
+    outline: none;
+}
+
+.secondary-button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 2px solid #2563eb;
+    background: white;
+    color: #2563eb;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: #2563eb;
+    color: white;
+}
+
+.danger-button {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 2px solid #dc2626;
+    background: white;
+    color: #dc2626;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.danger-button:hover {
+    background: #dc2626;
+    color: white;
+}
+
+.products-list {
+    width: 60%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 6px rgba(0,0,0,0.04),
+        0 10px 20px rgba(0,0,0,0.05);
+}
+
+.product-info {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+}
+
+@media (max-width: 1024px) {
+    .products-form-card,
+    .products-list {
+        width: 90%;
+    }
+}

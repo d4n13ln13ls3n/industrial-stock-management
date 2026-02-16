@@ -5,6 +5,7 @@ import com.danielyabu.entity.RawMaterial;
 import com.danielyabu.entity.ProductMaterial;
 
 import com.danielyabu.dto.ProductMaterialRequest;
+import com.danielyabu.dto.ProductMaterialResponse;
 
 import jakarta.transaction.Transactional;
 
@@ -116,5 +117,30 @@ public class ProductResource {
         return Response.status(Response.Status.CREATED)
             .entity(productMaterial)
             .build();
+    }
+
+    @GET
+    @Path("/{productId}/materials")
+    public Response listMaterialsForProduct(@PathParam("productId") Long productId) {
+        
+        Product product = Product.findById(productId);
+
+        if (product == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Product not found")
+                .build();
+        }
+
+        List<ProductMaterial> productMaterials = ProductMaterial.list("product", product);
+
+        List<ProductMaterialResponse> responseList = productMaterials.stream()
+        .map(pm -> new ProductMaterialResponse(
+            pm.rawMaterial.id,
+            pm.rawMaterial.name,
+            pm.requiredQuantity
+        ))
+        .toList();
+
+        return Response.ok(responseList).build();
     }
 }
