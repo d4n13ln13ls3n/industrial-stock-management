@@ -6,7 +6,6 @@ import "./RawMaterialsPage.css";
 export default function RawMaterialsPage() {
     const { items: materials, loading, create, update, remove } = useCrud("raw-materials");
 
-    text
     const { form, setForm, editingId, setEditingId, handleChange, resetForm } = useForm({
         code: "",
         name: "",

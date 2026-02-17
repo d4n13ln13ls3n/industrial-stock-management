@@ -11,7 +11,6 @@ export default function ProductsPage() {
     price: ""
     });
 
-    text
     const handleSubmit = async (e) => {
         e.preventDefault();
 
