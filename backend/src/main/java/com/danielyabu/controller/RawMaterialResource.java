@@ -1,5 +1,6 @@
 package com.danielyabu.controller;
 
+import com.danielyabu.entity.Product;
 import com.danielyabu.entity.RawMaterial;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
@@ -65,11 +66,13 @@ public class RawMaterialResource {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
+            Product.getEntityManager().flush();
+
             return Response.noContent().build();
 
         } catch (ConstraintViolationException e) {
             return Response.status(Response.Status.CONFLICT)
-                    .entity("Cannot delete raw material because it is associated with a product.")
+                    .entity("Cannot delete raw material because it is associated with a product. Remove association first.")
                     .build();
         }
     }

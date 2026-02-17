@@ -41,8 +41,9 @@ export function useCrud(endpoint) {
             await load();
         } catch (error) {
             console.error(error);
+            throw error; // 👈 ESSENCIAL
         }
-    }
+    };
 
     useEffect(() => {
         load();

@@ -1,10 +1,12 @@
 import { useCrud } from "../hooks/useCrud";
 import { useForm } from "../hooks/useForm";
+import { toast } from "react-toastify";
 import "./RawMaterialsPage.css";
 
 export default function RawMaterialsPage() {
     const { items: materials, loading, create, update, remove } = useCrud("raw-materials");
 
+    text
     const { form, setForm, editingId, setEditingId, handleChange, resetForm } = useForm({
         code: "",
         name: "",
@@ -19,17 +21,34 @@ export default function RawMaterialsPage() {
             stockQuantity: parseInt(form.stockQuantity, 10)
         };
 
-        if (editingId !== null) {
-            await update(editingId, payload);
-        } else {
-            await create(payload);
-        }
+        try {
+            if (editingId !== null) {
+                await update(editingId, payload);
+                toast.success("Raw material updated successfully.");
+            } else {
+                await create(payload);
+                toast.success("Raw material created successfully.");
+            }
 
-        resetForm();
+            resetForm();
+        } catch (error) {
+            toast.error("Failed to save raw material.");
+        }
     };
 
     const handleDelete = async (id) => {
-        await remove(id);
+        try {
+            await remove(id);
+            toast.success("Raw material deleted successfully.");
+        } catch (error) {
+            if (error.response?.status === 409) {
+                toast.error(
+                    "Cannot delete raw material because it is associated with products. Remove the associations in Production first."
+                );
+            } else {
+                toast.error("Failed to delete raw material.");
+            }
+        }
     };
 
     const handleEdit = (material) => {

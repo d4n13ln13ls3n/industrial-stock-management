@@ -73,11 +73,13 @@ public class ProductResource {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
 
+            Product.getEntityManager().flush();
+
             return Response.noContent().build();
 
         } catch (Exception e) {
             return Response.status(Response.Status.CONFLICT)
-                    .entity("Cannot delete product because it is associated with raw materials.")
+                    .entity("Cannot delete product because it is associated with raw materials. Remove associations first.")
                     .build();
         }
     }

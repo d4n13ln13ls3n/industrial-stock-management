@@ -49,13 +49,13 @@ public class ProductionServiceTest {
         ProductMaterial pm1 = new ProductMaterial();
         pm1.product = product;
         pm1.rawMaterial = materialA;
-        pm1.requiredQuantity = 5; // 20 / 5 = 4
+        pm1.requiredQuantity = 5;
         pm1.persist();
 
         ProductMaterial pm2 = new ProductMaterial();
         pm2.product = product;
         pm2.rawMaterial = materialB;
-        pm2.requiredQuantity = 2; // 6 / 2 = 3
+        pm2.requiredQuantity = 2;
         pm2.persist();
 
         List<ProductionCapacityResponse> result =

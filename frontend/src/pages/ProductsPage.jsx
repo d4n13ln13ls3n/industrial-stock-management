@@ -1,15 +1,17 @@
 import { useCrud } from "../hooks/useCrud";
 import { useForm } from "../hooks/useForm";
+import { toast } from "react-toastify";
 import "./ProductsPage.css";
 
 export default function ProductsPage() {
     const { items: products, loading, create, update, remove } = useCrud("products");
     const { form, setForm, editingId, setEditingId, handleChange, resetForm } = useForm({
-        code: "",
-        name: "",
-        price: ""
+    code: "",
+    name: "",
+    price: ""
     });
 
+    text
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -18,17 +20,34 @@ export default function ProductsPage() {
             price: Number(form.price)
         };
 
-        if (editingId !== null) {
-            await update(editingId, payload);
-        } else {
-            await create(payload);
-        }
+        try {
+            if (editingId !== null) {
+                await update(editingId, payload);
+                toast.success("Product updated successfully.");
+            } else {
+                await create(payload);
+                toast.success("Product created successfully.");
+            }
 
-        resetForm();
+            resetForm();
+        } catch (error) {
+            toast.error("Failed to save product.");
+        }
     };
 
     const handleDelete = async (id) => {
-        await remove(id);
+        try {
+            await remove(id);
+            toast.success("Product deleted successfully.");
+        } catch (error) {
+            if (error.response?.status === 409) {
+                toast.error(
+                    "Cannot delete product because it is associated with raw materials. Remove the associations in Production first."
+                );
+            } else {
+                toast.error("Failed to delete product.");
+            }
+        }
     };
 
     const handleEdit = (product) => {
