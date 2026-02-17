@@ -20,24 +20,27 @@ export default function ProductionPage() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 4;
+
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
     const currentProducts = capacity.slice(indexOfFirstProduct, indexOfLastProduct);
-    
+
     useEffect(() => {
-        setLoadingCapacity(true);
-        api.get("/production/capacity")
-            .then((response) => {
-                setCapacity(response.data);
-            })
-            .catch((error) => {
-                console.error("Error loading production capacity:", error);
-                toast.error("Failed to load production capacity.");
-            })
-            .finally(() => {
-                setLoadingCapacity(false);
-            });
+        loadCapacity();
     }, []);
+
+    const loadCapacity = async () => {
+        setLoadingCapacity(true);
+        try {
+            const response = await api.get("/production/capacity");
+            setCapacity(response.data);
+        } catch (error) {
+            console.error("Error loading production capacity:", error);
+            toast.error("Failed to load production capacity.");
+        } finally {
+            setLoadingCapacity(false);
+        }
+    };
 
     const handleAssociate = async (e) => {
         e.preventDefault();
@@ -66,15 +69,26 @@ export default function ProductionPage() {
             await api.post(`/products/${productId}/materials`, payload);
             toast.success("Material associated successfully!");
 
-            const response = await api.get("/production/capacity");
-            setCapacity(response.data);
+            await loadCapacity();
 
             setProductId("");
             setRawMaterialId("");
             setRequiredQuantity("");
         } catch (error) {
             console.error("Error associating material:", error);
-            toast.error("Failed to associate material. Please check the console for details.");
+            toast.error("Failed to associate material.");
+        }
+    };
+
+    const handleRemoveAssociation = async (productId, rawMaterialId) => {
+        try {
+            await api.delete(`/products/${productId}/materials/${rawMaterialId}`);
+            toast.success("Association removed successfully.");
+
+            await loadCapacity();
+            fetchProductMaterials(productId);
+        } catch (error) {
+            toast.error("Failed to remove association.");
         }
     };
 
@@ -128,7 +142,7 @@ export default function ProductionPage() {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2,
                                         })}
-                                        </p>
+                                    </p>
 
                                     <button
                                         className="view-materials-button"
@@ -144,14 +158,23 @@ export default function ProductionPage() {
                                             {productMaterialsMap[item.productId].map((pm) => (
                                                 <li key={pm.rawMaterialId}>
                                                     {pm.rawMaterialName} (Required Quantity: {pm.requiredQuantity})
+                                                    <button
+                                                        className="remove-button"
+                                                        onClick={() =>
+                                                            handleRemoveAssociation(item.productId, pm.rawMaterialId)
+                                                        }
+                                                    >
+                                                        Remove
+                                                    </button>
                                                 </li>
                                             ))}
                                         </ul>
                                     )}
 
-                                    {productMaterialsMap[item.productId] && productMaterialsMap[item.productId].length === 0 && (
-                                        <p>No materials associated with this product.</p>
-                                    )}
+                                    {productMaterialsMap[item.productId] &&
+                                        productMaterialsMap[item.productId].length === 0 && (
+                                            <p>No materials associated with this product.</p>
+                                        )}
                                 </div>
                             ))}
                         </div>
@@ -161,8 +184,11 @@ export default function ProductionPage() {
                         <nav>
                             <ul className="pagination">
                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                                    <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                        <button onClick={() => setCurrentPage(number)} className="page-link">
+                                    <li key={number} className={`page-item ${currentPage === number ? "active" : ""}`}>
+                                        <button
+                                            onClick={() => setCurrentPage(number)}
+                                            className="page-link"
+                                        >
                                             {number}
                                         </button>
                                     </li>
