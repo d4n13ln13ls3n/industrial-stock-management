@@ -1,7 +1,7 @@
 .products-container {
     width: 100%;
     max-width: 1600px;
-    margin: 8px auto;
+    margin: 0 auto 8px auto;
     padding: 0 80px;
 
     display: flex;
