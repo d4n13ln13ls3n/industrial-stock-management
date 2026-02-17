@@ -22,31 +22,38 @@ public class ProductionService {
         LOG.info("Generating production capacity plan...");
 
         List<Product> products = Product.listAll();
+        LOG.info("🔍 Total products found: " + products.size()); // 👈 NOVO
+
         List<ProductionCapacityResponse> responseList = new ArrayList<>();
 
         for (Product product : products) {
+            LOG.info("🔍 Processing product: " + product.code + " (ID: " + product.id + ")"); // 👈 NOVO
 
-            List<ProductMaterial> materials =
-                    ProductMaterial.list("product", product);
+            List<ProductMaterial> materials = ProductMaterial.list("product", product);
+            LOG.info("🔍 Materials found for " + product.code + ": " + materials.size()); // 👈 NOVO
 
             if (materials.isEmpty()) {
+                LOG.info("🔍 Skipping " + product.code + " - no materials"); // 👈 NOVO
                 continue;
             }
 
             int maxProducible = Integer.MAX_VALUE;
 
             for (ProductMaterial material : materials) {
-
-                int possible =
-                        material.rawMaterial.stockQuantity / material.requiredQuantity;
+                int possible = material.rawMaterial.stockQuantity / material.requiredQuantity;
+                LOG.info("🔍 Material " + material.rawMaterial.code + 
+                        " - Stock: " + material.rawMaterial.stockQuantity + 
+                        " - Required: " + material.requiredQuantity + 
+                        " - Possible: " + possible); // 👈 NOVO
 
                 if (possible < maxProducible) {
                     maxProducible = possible;
                 }
             }
 
-            if (maxProducible > 0) {
+            LOG.info("🔍 Final maxProducible for " + product.code + ": " + maxProducible); // 👈 NOVO
 
+            if (maxProducible > 0) {
                 LOG.info("Product " + product.code + " can produce " + maxProducible + " units.");
 
                 ProductionCapacityResponse response = new ProductionCapacityResponse();
@@ -55,18 +62,15 @@ public class ProductionService {
                 response.productName = product.name;
                 response.productPrice = product.price;
                 response.producibleQuantity = maxProducible;
-                response.totalValue =
-                        product.price.multiply(BigDecimal.valueOf(maxProducible));
+                response.totalValue = product.price.multiply(BigDecimal.valueOf(maxProducible));
 
                 responseList.add(response);
+            } else {
+                LOG.info("🔍 Skipping " + product.code + " - maxProducible <= 0"); // 👈 NOVO
             }
         }
 
-        responseList.sort(
-                Comparator.comparing(
-                        (ProductionCapacityResponse r) -> r.productPrice)
-                        .reversed()
-        );
+        responseList.sort(Comparator.comparing((ProductionCapacityResponse r) -> r.productPrice).reversed());
 
         return responseList;
     }
