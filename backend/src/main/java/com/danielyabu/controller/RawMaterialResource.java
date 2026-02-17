@@ -10,6 +10,8 @@ import java.util.List;
 
 import jakarta.validation.Valid;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 @Path("/raw-materials")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -56,13 +58,19 @@ public class RawMaterialResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        
-        boolean deleted = RawMaterial.deleteById(id);
+        try {
+            boolean deleted = RawMaterial.deleteById(id);
 
-        if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            if (!deleted) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            return Response.noContent().build();
+
+        } catch (ConstraintViolationException e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Cannot delete raw material because it is associated with a product.")
+                    .build();
         }
-
-        return Response.noContent().build();
     }
 }

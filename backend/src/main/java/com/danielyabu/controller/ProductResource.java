@@ -65,13 +65,21 @@ public class ProductResource {
     @Path("/{id}")
     @Transactional
     public Response delete(@PathParam("id") Long id) {
-        boolean deleted = Product.deleteById(id);
 
-        if (!deleted) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        try {
+            boolean deleted = Product.deleteById(id);
+
+            if (!deleted) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            return Response.noContent().build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity("Cannot delete product because it is associated with raw materials.")
+                    .build();
         }
-
-        return Response.noContent().build();
     }
 
     @POST
@@ -122,6 +130,7 @@ public class ProductResource {
     @GET
     @Path("/{productId}/materials")
     public Response listMaterialsForProduct(@PathParam("productId") Long productId) {
+
         
         Product product = Product.findById(productId);
 
@@ -142,5 +151,26 @@ public class ProductResource {
         .toList();
 
         return Response.ok(responseList).build();
+    }
+
+    @DELETE
+    @Path("/{productId}/materials/{rawMaterialId}")
+    @Transactional
+    public Response removeMaterialFromProduct(
+        @PathParam("productId") Long productId,
+        @PathParam("rawMaterialId") Long rawMaterialId) {
+        
+        long deletedCount = ProductMaterial.delete(
+        "product.id = ?1 and rawMaterial.id = ?2"
+        , productId, rawMaterialId
+        );
+
+        if (deletedCount == 0) {
+            return Response.status(Response.Status.NOT_FOUND)
+                .entity("Association not found")
+                .build();
+        }
+
+        return Response.noContent().build();
     }
 }

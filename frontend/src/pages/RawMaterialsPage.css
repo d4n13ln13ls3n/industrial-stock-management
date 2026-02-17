@@ -3,6 +3,7 @@
     max-width: 1600px;
     margin: 0 auto 8px auto;
     padding: 0 80px;
+    min-height: calc(100vh - 64px);
 
     display: flex;
     flex-direction: column;
