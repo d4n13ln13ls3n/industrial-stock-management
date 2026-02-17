@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/api";
 import { useCrud } from "../hooks/useCrud";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
@@ -26,7 +26,7 @@ export default function ProductionPage() {
     
     useEffect(() => {
         setLoadingCapacity(true);
-        axios.get("/api/production/capacity")
+        api.get("/production/capacity")
             .then((response) => {
                 setCapacity(response.data);
             })
@@ -63,10 +63,10 @@ export default function ProductionPage() {
         };
 
         try {
-            await axios.post(`/api/products/${productId}/materials`, payload);
+            await api.post(`/products/${productId}/materials`, payload);
             toast.success("Material associated successfully!");
 
-            const response = await axios.get("/api/production/capacity");
+            const response = await api.get("/production/capacity");
             setCapacity(response.data);
 
             setProductId("");
@@ -91,7 +91,7 @@ export default function ProductionPage() {
         setLoadingMaterials((prev) => ({ ...prev, [productId]: true }));
 
         try {
-            const response = await axios.get(`/api/products/${productId}/materials`);
+            const response = await api.get(`/products/${productId}/materials`);
             setProductMaterialsMap((prevState) => ({
                 ...prevState,
                 [productId]: response.data,
