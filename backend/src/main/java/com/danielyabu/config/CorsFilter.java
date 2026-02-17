@@ -14,13 +14,14 @@ public class CorsFilter implements ContainerResponseFilter {
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) throws IOException {
 
-        responseContext.getHeaders().add("Access-Control-Allow-Origin",
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Origin",
                 "https://industrial-stock-management.vercel.app");
-        responseContext.getHeaders().add("Access-Control-Allow-Methods",
+
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Methods",
                 "GET, POST, PUT, DELETE, OPTIONS");
-        responseContext.getHeaders().add("Access-Control-Allow-Headers",
+
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Headers",
                 "Content-Type, Authorization");
-        responseContext.getHeaders().add("Access-Control-Allow-Credentials",
-                "true");
+
     }
 }
